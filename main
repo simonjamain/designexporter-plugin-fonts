@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+require 'byebug'
+ACCEPTED_FONTS_EXTENSIONS = %w( .ttf .otf )
+
+fontsFolder = ARGV[0].to_s
+
+def isValidFontFile?(fontFile)
+  ACCEPTED_FONTS_EXTENSIONS.include? File.extname(fontFile).downcase
+end
+
+#detects needed fonts
+Dir.foreach(fontsFolder) do |node|
+  nodeFullPath = File.join(Dir.pwd, fontsFolder, node)
+  if File.file?(nodeFullPath) && isValidFontFile?(node)
+    puts "#{node} failed to install" unless system("cp -n #{nodeFullPath.shellescape} ~/.fonts")
+  end
+end
+system("fc-cache -fv")
